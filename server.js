@@ -16,6 +16,7 @@ app.use(methodOverride());
 var Recipe = mongoose.model('Recipe', {
 	title: String,
 	description: String,
+	reviews: [String],
 	score: { type: Number, default: 0 }
 });
 
@@ -41,6 +42,7 @@ var Recipe = mongoose.model('Recipe', {
         Recipe.create({
             title : req.body.title,
             description: req.body.description,
+            reviews: req.body.reviews,
             score: req.body.score
         }, function(err, recipe) {
             if (err)
@@ -56,9 +58,24 @@ var Recipe = mongoose.model('Recipe', {
 
     });
 
+    //push a new review for a certain recipe
+    app.post('/api/recipes/:recipe_id/reviews', function(req, res){
+    	Recipe.findByIdAndUpdate(req.params.recipe_id, {$push: {"reviews": req.body.review}}, function(err,recipe){
+    		if(err)
+    			res.send(err);
+    		//recipe.reviews.push(req.body.review, function());
+
+    		recipe.save(function(err){
+    			if(err)
+    				res.send(err);
+    			res.json({message: 'review pushed'});
+    		});
+    	});
+    });
+
     //update a recipe with new score
     app.put('/api/recipes/:recipe_id', function(req, res){
-    	Recipe.findByIdAndUpdate(req.params.recipe_id, function(err, recipe){
+    	Recipe.findById(req.params.recipe_id, function(err, recipe){
     		if(err)
     			res.send(err);
 

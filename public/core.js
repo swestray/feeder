@@ -26,6 +26,19 @@ app.controller('recipeController', function($scope, $http){
             });
     };
 
+    $scope.addReview = function(id) {
+    	$http.post('/api/recipes/' + id + '/reviews', $scope.review)
+    		.success(function(data){
+    			$scope.review = {};
+    			$scope.reviews = data;
+    			console.log(data);
+    		})
+    		.error(function(data){
+    			console.log('Error: ' + data);
+    		});
+    }
+
+
     // delete a recipe after checking it
     $scope.deleteRecipe = function(id) {
         $http.delete('/api/recipes/' + id)
@@ -62,7 +75,6 @@ app.controller('YumController', function($scope){
 			isYummed = false;
 			$scope.yumButton = 'yum';
 			recipe.score -= 1
-    };
 		}
 		else if(isYucked){
 			isYucked = false;
