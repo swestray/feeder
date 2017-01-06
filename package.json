@@ -1,0 +1,21 @@
+{
+  "name": "feeder",
+  "version": "0.0.0",
+  "description": "ERROR: No README data found!",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "~1.15.2",
+    "express": "~4.14.0",
+    "method-override": "~2.3.7",
+    "mongoose": "~4.7.6",
+    "bootstrap": "~3.3.7",
+    "nodemon": "~1.11.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Stone Westray",
+  "license": "BSD-2-Clause"
+}
