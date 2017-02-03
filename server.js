@@ -17,6 +17,8 @@ var Recipe = mongoose.model('Recipe', {
 	title: String,
 	description: String,
 	reviews: [String],
+	ingredients: [{quantity: Number, unit: String, item: String}],
+	steps: [String],
 	score: { type: Number, default: 0 }
 });
 
@@ -43,6 +45,7 @@ var Recipe = mongoose.model('Recipe', {
             title : req.body.title,
             description: req.body.description,
             reviews: req.body.reviews,
+            steps: req.body.steps,
             score: req.body.score
         }, function(err, recipe) {
             if (err)
@@ -63,12 +66,10 @@ var Recipe = mongoose.model('Recipe', {
     	Recipe.findByIdAndUpdate(req.params.recipe_id, {$push: {"reviews": req.body.review}}, function(err,recipe){
     		if(err)
     			res.send(err);
-    		//recipe.reviews.push(req.body.review, function());
-
     		recipe.save(function(err){
     			if(err)
     				res.send(err);
-    			res.json({message: 'review pushed'});
+    			res.json({message: 'review pushed ' + req.body.review});
     		});
     	});
     });

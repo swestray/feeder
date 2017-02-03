@@ -2,6 +2,7 @@ var app = angular.module('Feeder', []);
 
 app.controller('recipeController', function($scope, $http){
 	$scope.formData = {};
+	$scope.reviewFormData = {};
 
     // when landing on the page, get all recipes and show them
     $http.get('/api/recipes')
@@ -13,10 +14,11 @@ app.controller('recipeController', function($scope, $http){
             console.log('Error: ' + data);
         });
 
-    // when submitting the add form, send the data to the node API
+    // when submitting the add form, send the form data to the node API
     $scope.createRecipe = function() {
         $http.post('/api/recipes', $scope.formData)
             .success(function(data) {
+            	console.log($scope.formData.title)
                 $scope.formData = {}; // clear the form so our user is ready to enter another
                 $scope.recipes = data;
                 console.log(data);
@@ -25,18 +27,27 @@ app.controller('recipeController', function($scope, $http){
                 console.log('Error: ' + data);
             });
     };
-
+    //submitting the review form
     $scope.addReview = function(id) {
-    	$http.post('/api/recipes/' + id + '/reviews', $scope.review)
+    	$http.post('/api/recipes/' + id + '/reviews', $scope.reviewFormData)
     		.success(function(data){
-    			$scope.review = {};
+    			console.log($scope.reviewFormData.review)
+    			$scope.reviewFormData = {};
     			$scope.reviews = data;
     			console.log(data);
     		})
     		.error(function(data){
     			console.log('Error: ' + data);
     		});
-    }
+    };
+
+    $scope.newRecipe = {
+    	title: '',
+        description: '',
+        reviews: [],
+        steps: [],
+        score: 0
+    };
 
 
     // delete a recipe after checking it
@@ -118,4 +129,15 @@ app.controller('TabController', function($scope){
    	$scope.isSet = function(tabName){
    		return $scope.tab === tabName;
    	};
+});
+
+app.controller('StepController', function($scope){
+	$scope.step = {};
+	$scope.addStep = function(newRecipe){
+		newRecipe.steps.push($scope.step);
+		$scope.step = {};
+	};
+	$scope.removeStep = function(array, index){
+		array.splice(index, 1);
+	};
 });
