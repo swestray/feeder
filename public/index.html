@@ -139,8 +139,6 @@
                     <input type="text" class="form-control input-lg text-center" placeholder="Title of Dish" ng-model="formData.title">
                     <input type="text" class="form-control input-lg text-center" placeholder="Description" ng-model="formData.description">
                 </div>
-                <!-- createRecipe() WILL CREATE NEW RECIPE -->
-                <button type="submit" class="btn btn-primary btn-lg" ng-click="createRecipe()">Add New Recipe</button>
 
                 <!--TABS-->
                 <section class="tab" ng-controller="TabController">
@@ -152,10 +150,10 @@
                     </ul>
 
                     <!--INGREDIENT TAB-->
-                    <div ng-show="isSet(1)">
+                    <div ng-show="isSet(1)" ng-controller='IngredientController'>
 
                       <!--INGREDIENT-->
-                      <div ng-repeat="ingredient in recipe.ingredients">
+                      <div ng-repeat="ingredient in formData.ingredients">
                       <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
                         <div class="col-xs-2 col-xs-offset-1">
                           <h3>{{ingredient.quantity}}</h3>
@@ -167,7 +165,7 @@
                           <h3>{{ingredient.item}}</h3>
                         </div>
                         <div class="col-xs-1">
-                          <button type="button" ng-click="removeIngredient(recipe.ingredients, $index)" style='background-color:#cb2e01' class="btn btn-circle">
+                          <button type="button" ng-click="removeIngredient(formData.ingredients, $index)" style='background-color:#cb2e01' class="btn">
                             <i style="font-size:2.5em; color:#ffd171" class='glyphicon glyphicon-remove'></i>
                           </button>
                         </div>
@@ -175,58 +173,57 @@
                       </div><!--ng-repeat end-->
 
                       <!--INGREDIENT FORM-->
-                      <form ng-submit='addIngredient(recipe.newRecipe)' name='recipeForm'>
+                      <form name='recipeForm'>
                         <!--  Live Preview -->
                         <div style ='background-color:#cb2e01; border-color: #cb2e01; color:#ffd171' class="well row text-center">
                           <div class="col-xs-2 col-xs-offset-1">
-                            <h3>{{ingredientCtrl.ingredient.quantity}}</h3>
+                            <h3>{{ingredient.quantity}}</h3>
                           </div>
                           <div class="col-xs-2">
-                            <h3>{{ingredientCtrl.ingredient.unit}}</h3>
+                            <h3>{{ingredient.unit}}</h3>
                           </div>
                           <div class="col-xs-5">
-                            <h3>{{ingredientCtrl.ingredient.item}}</h3>
+                            <h3>{{ingredient.item}}</h3>
                           </div>
                         </div>
                         <!--FORM-->
                         <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
                           <div class="col-xs-2 col-xs-offset-1">
-                            <input ng-model='ingredientCtrl.ingredient.quantity' type="number" placeholder="Quantity" required>
+                            <input ng-model='ingredient.quantity' type="number" placeholder="Quantity" required>
                           </div>
                           <div class="col-xs-2">
-                            <select ng-model='ingredientCtrl.ingredient.unit' required>
+                            <select ng-model='ingredient.unit' required>
                               <option>Tsp</option>
                               <option>Tbl</option>
                               <option>Cup</option>
                             </select>
                           </div>
                           <div class="col-xs-6">
-                            <input ng-model='ingredientCtrl.ingredient.item'type="text" placeholder="Ingredient" required>
+                            <input ng-model='ingredient.item'type="text" placeholder="Ingredient" required>
                           </div>
                         </div>
 
                         <!--ADD INGREDIENT-->
                         <div class="row text-center">
-                          <button style='background-color:#cb2e01' type="submit" class="btn">
+                          <button type="button" ng-click="addIngredient(formData)" style='background-color:#cb2e01' class="btn">
                             <i style="font-size:3.5em; color:#ffd171" class='glyphicon glyphicon-plus'></i>
                           </button>
                         </div>
 
                       </form>
-
                     </div>
 
                     <!--DIRECTIONS TAB-->
-                    <div ng-show="isSet(2)">
+                    <div ng-show="isSet(2)" ng-controller='StepController'>
 
                       <!--STEPS-->
-                      <div ng-repeat="step in newRecipe.steps">
-                        <div ng-controller='StepController as stepCtrl' style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
+                      <div ng-repeat="step in formData.steps">
+                        <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
                             <div class="col-xs-11">
                               <h3>{{step}}</h3>
                             </div>
                             <div class="col-xs-1">
-                              <button type="button" ng-click="stepCtrl.removeStep(newRecipe.steps, $index)" style='background-color:#cb2e01' class="btn btn-circle">
+                              <button type="button" ng-click="removeStep(formData.steps, $index)" style='background-color:#cb2e01' class="btn btn-circle">
                                 <i style="font-size:2.5em; color:#ffd171" class='glyphicon glyphicon-remove'></i>
                               </button>
                             </div>
@@ -237,15 +234,15 @@
                       <form name='stepForm'>
                         <!--  Live Preview -->
                         <div style ='background-color:#cb2e01; border-color: #cb2e01; color:#ffd171' class="well row text-center">
-                          <h3>{{stepCtrl.step}}</h3>
+                          <h3>{{step}}</h3>
                         </div>
 
                         <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
-                          <textarea ng-model='stepCtrl.step'></textarea>
+                          <textarea ng-model='step'></textarea>
                         </div>
                         <!--ADD STEP-->
                         <div class="row text-center">
-                          <button style='background-color:#cb2e01' ng-click='stepCtrl.addStep(newRecipe)' class="btn">
+                          <button style='background-color:#cb2e01' ng-click='addStep(formData)' class="btn">
                             <i style="font-size:3.5em; color:#ffd171" class='glyphicon glyphicon-plus'></i>
                           </button>
                         </div>
@@ -253,8 +250,11 @@
 
                     </div>
 
-                  </section>
+                </section>
+
             </div>
+            <!-- createRecipe() WILL CREATE NEW RECIPE -->
+            <button type="submit" class="pull-right btn btn-primary btn-lg" ng-click="createRecipe()">Add New Recipe</button>
         </div>
 
     </div>

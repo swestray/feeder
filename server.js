@@ -45,6 +45,7 @@ var Recipe = mongoose.model('Recipe', {
             title : req.body.title,
             description: req.body.description,
             reviews: req.body.reviews,
+            ingredients: req.body.ingredients,
             steps: req.body.steps,
             score: req.body.score
         }, function(err, recipe) {

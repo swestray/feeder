@@ -19,7 +19,19 @@ app.controller('recipeController', function($scope, $http){
         $http.post('/api/recipes', $scope.formData)
             .success(function(data) {
             	console.log($scope.formData.title)
-                $scope.formData = {}; // clear the form so our user is ready to enter another
+            	console.log($scope.formData.description)
+            	console.log($scope.formData.reviews)
+            	console.log($scope.formData.ingredients)
+            	console.log($scope.formData.steps)
+            	console.log($scope.formData.score)
+                $scope.formData = {
+                	title: '',
+        			description: '',
+        			reviews: [],
+        			ingredients: [],
+        			steps: [],
+        			score: 0
+                }; // clear the form so our user is ready to enter another
                 $scope.recipes = data;
                 console.log(data);
             })
@@ -41,10 +53,11 @@ app.controller('recipeController', function($scope, $http){
     		});
     };
 
-    $scope.newRecipe = {
+    $scope.formData = {
     	title: '',
         description: '',
         reviews: [],
+        ingredients: [],
         steps: [],
         score: 0
     };
@@ -131,11 +144,23 @@ app.controller('TabController', function($scope){
    	};
 });
 
+app.controller('IngredientController', function($scope){
+	$scope.ingredient = {};
+	$scope.addIngredient = function(newRecipe){
+		newRecipe.ingredients.push($scope.ingredient);
+		$scope.ingredient= {};
+	};
+	$scope.removeIngredient = function(array, index){
+		array.splice(index, 1);
+	};
+});
+
 app.controller('StepController', function($scope){
-	$scope.step = {};
+	$scope.stepForm = {};
+	console.log($scope.stepForm.step)
 	$scope.addStep = function(newRecipe){
 		newRecipe.steps.push($scope.step);
-		$scope.step = {};
+		$scope.stepForm = {};
 	};
 	$scope.removeStep = function(array, index){
 		array.splice(index, 1);
