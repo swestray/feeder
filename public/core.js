@@ -159,7 +159,7 @@ app.controller('StepController', function($scope){
 	$scope.stepForm = {};
 	console.log($scope.stepForm.step)
 	$scope.addStep = function(newRecipe){
-		newRecipe.steps.push($scope.step);
+		newRecipe.steps.push($scope.stepForm.step);
 		$scope.stepForm = {};
 	};
 	$scope.removeStep = function(array, index){
