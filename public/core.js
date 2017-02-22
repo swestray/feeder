@@ -39,6 +39,13 @@ app.controller('recipeController', function($scope, $http){
                 console.log('Error: ' + data);
             });
     };
+    $scope.updateScore = function(id, score){
+    	$http.put('/api/recipes/' + id + '/score', score)
+    		.success(function(data) {
+    		console.log(score);
+    	});
+    };
+
     //submitting the review form
     $scope.addReview = function(id) {
     	$http.post('/api/recipes/' + id + '/reviews', $scope.reviewFormData)
@@ -98,7 +105,8 @@ app.controller('YumController', function($scope){
 		if(isYummed){
 			isYummed = false;
 			$scope.yumButton = 'yum';
-			recipe.score -= 1
+			$scope.updateScore(recipe._id, recipe.score -= 1);
+			console.log('id: ' + recipe._id + ',score: ' + recipe.score);
 		}
 		else if(isYucked){
 			isYucked = false;

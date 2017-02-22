@@ -76,12 +76,11 @@ var Recipe = mongoose.model('Recipe', {
     });
 
     //update a recipe with new score
-    app.put('/api/recipes/:recipe_id', function(req, res){
+    app.put('/api/recipes/:recipe_id/score', function(req, res){
     	Recipe.findById(req.params.recipe_id, function(err, recipe){
     		if(err)
     			res.send(err);
-
-    		recipe.score = req.body.score;
+    		recipe.score = req;
 
     		recipe.save(function(err){
     			if(err)

@@ -25,6 +25,13 @@
         <div class="navbar-header">
           <a style="font-size: 3em; color: #ffd171"class="navbar-brand" href="#"><strong>feeder</strong></a>
         </div>
+        <div class="col-xs-7 col-md-7">
+          <form class="navbar-form" role="search">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search" ng-model='searchForm'>
+          </div>
+          </form>
+        </div>
         <ul class="nav navbar-nav navbar-right">
           <!--<li ng-hide='user.product.isLoggedIn'><a style="color: #ffd171"href=""><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
           <li ng-hide='user.product.isLoggedIn'><a style="color: #ffd171"href=""><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
@@ -35,21 +42,23 @@
     </nav>
 
     <div ng-controller="recipeController" class="container">
-
-        <!-- TODO LIST -->
+        <!-- recipe feed -->
         <div id="recipe-feed" class="row">
             <!-- LOOP OVER THE RECIPES IN $scope.recipes -->
-            <div ng-repeat="recipe in recipes">
+            <div ng-repeat="recipe in recipes | filter:searchForm">
                 <div style="background-color:#9b350d; border-color: #9b350d" class="well">
                     <div class="row">
                         <!--COLLAPSE BUTTON-->
                         <div class="col-xs-1" ng-controller="CollapseController">
-                          <button href="#{{recipe._id}}" ng-click='collapse()' class="btn btn-warning" data-toggle="collapse" ng-init="collapseBtn = 'glyphicon glyphicon-chevron-down'">
+                          <button href="#{{recipe._id}}" ng-click='collapse()' class="hidden-xs btn btn-warning" data-toggle="collapse" ng-init="collapseBtn = 'glyphicon glyphicon-chevron-down'">
                             <i style="font-size:2.5em; color:#ffd171" class='{{collapseBtn}}'></i>
+                          </button>
+                          <button href="#{{recipe._id}}" ng-click='collapse()' class="hidden-xs-down btn btn-warning" data-toggle="collapse" ng-init="collapseBtn = 'glyphicon glyphicon-chevron-down'">
+                            <i style="font-size:1.5em; color:#ffd171" class='{{collapseBtn}}'></i>
                           </button>
                         </div>
                         <!--TITLE and DESCRIPTION-->
-                        <div class="text-center col-xs-10">
+                        <div class="text-center col-xs-9">
                           <h1 style="color:#ffd171"><strong>{{recipe.title | uppercase}}</strong></h1>
                           <h4 style="color:#ffd171">{{recipe.description}}</h4>
                         </div>
@@ -58,7 +67,7 @@
                           <button class='btn btn-warning pull-right' ng-click='yum(recipe)' ng-init="yumButton='yum';">
                             {{yumButton}}
                           </button>
-                          <h3 class="" style="color:#ffd171">{{recipe.score}}</h3>
+                          <h3 class="text-center" style="color:#ffd171">{{recipe.score}}</h3>
                           <button class='btn btn-warning pull-right' ng-click='yuck(recipe)' ng-init="yuckButton='yuck';">
                             {{yuckButton}}
                           </button>
@@ -67,224 +76,183 @@
                     <!--COLLAPSE-->
                     <div id="{{recipe._id}}" class="collapse">
 
-                      <!--TABS-->
-                      <section class="tab" ng-controller="TabController">
-                          <ul style='display:inline-block; background-color: #cb2e01; color: #ffd171' class="nav nav-pills">
-                            <li ng-class="{ active: isSet(1) }">
-                              <a href ng-click="setTab(1)">Ingredients</a></li>
-                            <li ng-class="{ active: isSet(2) }">
-                              <a href ng-click="setTab(2)">Directions</a></li>
-                            <li ng-class="{ active: isSet(3) }">
-                              <a href ng-click="setTab(3)">Reviews</a></li>
-                          </ul>
+                      <!-- Nav tabs -->
+                      <ul style='display:inline-block; background-color: #f88632; color: #ffd171' class="nav nav-pills" role="tablist">
+                        <li role="presentation" class="active"><a href="#ingredient{{recipe._id}}" style='color:#ffd171' aria-controls="ingredient" role="tab" data-toggle="tab">Ingredients</a></li>
+                        <li role="presentation"><a href="#directions{{recipe._id}}" style='color:#ffd171' aria-controls="directions" role="tab" data-toggle="tab">Directions</a></li>
+                      </ul>
 
-                          <!--INGREDIENT TAB-->
-                          <div ng-show="isSet(1)">
-                              <!--INGREDIENT-->
-                              <div ng-repeat="ingredient in recipe.ingredients">
-                                  <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well-sm row text-center">
-                                      <div class="col-xs-2 col-xs-offset-1">
-                                        <h3>{{ingredient.quantity}}</h3>
-                                      </div>
-                                      <div class="col-xs-2">
-                                        <h3>{{ingredient.unit}}</h3>
-                                      </div>
-                                      <div class="col-xs-6">
-                                        <h3>{{ingredient.item}}</h3>
-                                      </div>
-                                  </div>
-                              </div><!--ng-repeat end-->
-                          </div>
-
-                          <!--DIRECTIONS TAB-->
-                          <div ng-show="isSet(2)">
-                              <!--STEPS-->
-                              <div ng-repeat="step in recipe.steps">
-                                  <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well-sm row text-center">
-                                      <h3>{{step}}</h3>
-                                  </div>
-                              </div><!--ng-repeat end-->
-                          </div>
-
-                          <!--REVIEW TAB-->
-                          <div ng-show="isSet(3)">
-                              <!--REVIEWS-->
-                              <div ng-repeat="review in recipe.reviews">
-                                  <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well-sm row text-center">
-                                      <h3>{{review}}</h3>
-                                  </div>
-                              </div><!--ng-repeat end-->
-
-                              <!--REVIEW FORM-->
-                              <form name='reviewForm'>
-                                  <!--  Live Preview -->
-                                  <div style ='background-color:#cb2e01; border-color: #cb2e01; color:#ffd171;' class="well-sm row text-center">
-                                      <h3>{{reviewFormData.review}}</h3>
-                                  </div>
-                                  <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well-sm row text-center">
-                                      <input type="text" class="form-control input-lg text-center" placeholder="Write a Review" ng-model="reviewFormData.review">
-                                  </div>
-                                  <!--ADD REVIEW-->
-                                  <div class="row text-center">
-                                      <button id="addBtn" style='background-color:#cb2e01' ng-click='addReview(recipe._id)' class="btn">
-                                          <i style="font-size:3.5em; color:#ffd171" class='glyphicon glyphicon-plus'></i>
-                                      </button>
-                                  </div>
-                              </form>
-                          </div>
-                      </section>
-
+                      <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade in active" id="ingredient{{recipe._id}}">
+                          <!--INGREDIENT-->
+                          <div ng-repeat="ingredient in recipe.ingredients">
+                            <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well-sm row text-center">
+                              <div class="col-xs-2 col-xs-offset-1">
+                                <h3>{{ingredient.quantity}}</h3>
+                              </div>
+                              <div class="col-xs-2">
+                                <h3>{{ingredient.unit}}</h3>
+                              </div>
+                              <div class="col-xs-6">
+                                <h3>{{ingredient.item}}</h3>
+                              </div>
+                            </div>
+                          </div><!--ng-repeat end-->
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="directions{{recipe._id}}">
+                          <!--STEPS-->
+                          <div ng-repeat="step in recipe.steps">
+                            <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well-sm row text-center">
+                              <h3>{{step}}</h3>
+                            </div>
+                          </div><!--ng-repeat end-->
+                        </div>
+                      </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!--ADD RECIPE COLLAPSE BUTTON-->
-        <button style='background-color:#9b350d; border-color:#9b350d' href="#addRecipe" class="btn btn-info" data-toggle="collapse">
+        <button href="#addRecipe" class="btn btn-danger" data-toggle="collapse">
           <i style="font-size:3.5em; color:#ffd171" class='glyphicon glyphicon-plus'></i>
         </button>
         <div id="addRecipe" class="collapse">
 
+          <div style="background-color:#9b350d; border-color: #9b350d" class="well">
+            <!-- FORM -->
+            <!-- pass in the variable if our form is valid or invalid -->
+            <form name="userForm" novalidate>
+              <div class="text-center">
+                <h1 style="letter-spacing: 6px; color:#ffd171"><strong>{{formData.title | uppercase}}</strong></h1>
+                <h4 style="color:#ffd171">{{formData.description}}</h4>
+              </div>
+              <!-- TITLE -->
+              <div class="form-group" ng-class="{ 'has-error' : userForm.title.$invalid && !userForm.title.$pristine }">
+                  <input type="text" name="title" class="form-control text-center" placeholder='Title of Recipe' ng-model="formData.title" required>
+                  <p ng-show="userForm.title.$invalid && !userForm.title.$pristine" class="help-block">A title is required.</p>
+              </div>
 
+              <!-- DESCRIPTION -->
+              <div class="form-group" ng-class="{ 'has-error' : userForm.description.$invalid && !userForm.description.$pristine }">
+                  <input type="text" name="description" class="form-control text-center" placeholder='Brief Description' ng-model="formData.description" required>
+                  <p ng-show="userForm.title.$invalid && !userForm.title.$pristine" class="help-block">A description is required.</p>
+              </div>
 
+              <div>
 
-        </div>
+                <!-- Nav tabs -->
+                <ul style='display:inline-block; background-color: #f88632; color: #ffd171' class="nav nav-pills" role="tablist">
+                  <li role="presentation" class="active"><a href="#Ingredients" style='color:#ffd171' aria-controls="Ingredients" role="tab" data-toggle="tab">Ingredients</a></li>
+                  <li role="presentation"><a href="#Directions" style='color:#ffd171' aria-controls="Directions" role="tab" data-toggle="tab">Directions</a></li>
+                </ul>
 
-
-
-        <div style="background-color:#9b350d; border-color: #9b350d" class="well">
-          <!-- FORM -->
-          <!-- pass in the variable if our form is valid or invalid -->
-          <form name="userForm" novalidate>
-            <div class="text-center">
-              <h1 style="letter-spacing: 6px; color:#ffd171"><strong>{{formData.title | uppercase}}</strong></h1>
-              <h4 style="color:#ffd171">{{formData.description}}</h4>
-            </div>
-            <!-- TITLE -->
-            <div class="form-group" ng-class="{ 'has-error' : userForm.title.$invalid && !userForm.title.$pristine }">
-                <input type="text" name="title" class="form-control text-center" placeholder='Title of Recipe' ng-model="formData.title" required>
-                <p ng-show="userForm.title.$invalid && !userForm.title.$pristine" class="help-block">A title is required.</p>
-            </div>
-
-            <!-- DESCRIPTION -->
-            <div class="form-group" ng-class="{ 'has-error' : userForm.description.$invalid && !userForm.description.$pristine }">
-                <input type="text" name="description" class="form-control text-center" placeholder='Brief Description' ng-model="formData.description" required>
-                <p ng-show="userForm.title.$invalid && !userForm.title.$pristine" class="help-block">A description is required.</p>
-            </div>
-
-            <div>
-
-              <!-- Nav tabs -->
-              <ul style='display:inline-block; background-color: #f88632; color: #ffd171' class="nav nav-pills" role="tablist">
-                <li role="presentation" class="active"><a href="#Ingredients" style='color:#ffd171' aria-controls="Ingredients" role="tab" data-toggle="tab">Ingredients</a></li>
-                <li role="presentation"><a href="#Directions" style='color:#ffd171' aria-controls="Directions" role="tab" data-toggle="tab">Directions</a></li>
-              </ul>
-
-              <div class="tab-content">
-                <!--Ingredient tab-->
-                <div ng-controller='IngredientController' role="tabpanel" class="tab-pane fade in active" id="Ingredients">
-                  <!--INGREDIENT-->
-                  <div ng-repeat="ingredient in formData.ingredients">
-                    <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
-                      <div class="col-xs-2 col-xs-offset-1">
-                        <h3>{{ingredient.quantity}}</h3>
-                      </div>
-                      <div class="col-xs-2">
-                        <h3>{{ingredient.unit}}</h3>
-                      </div>
-                      <div class="col-xs-6">
-                        <h3>{{ingredient.item}}</h3>
-                      </div>
-                      <div class="col-xs-1">
-                        <button type="button" ng-click="removeIngredient(formData.ingredients, $index)" class="btn btn-danger">
-                          <i style="font-size:2.5em; color:#ffd171" class='glyphicon glyphicon-remove'></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div><!--ng-repeat end-->
-
-                    <!--INGREDIENT FORM-->
-                    <form name='ingredientForm'>
-                      <!--  Live Preview -->
-                      <div style ='background-color:#f88632; border-color: #f88632; color:#ffd171' class="well row text-center">
+                <div class="tab-content">
+                  <!--Ingredient tab-->
+                  <div ng-controller='IngredientController' role="tabpanel" class="tab-pane fade in active" id="Ingredients">
+                    <!--INGREDIENT-->
+                    <div ng-repeat="ingredient in formData.ingredients">
+                      <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
                         <div class="col-xs-2 col-xs-offset-1">
                           <h3>{{ingredient.quantity}}</h3>
                         </div>
                         <div class="col-xs-2">
                           <h3>{{ingredient.unit}}</h3>
                         </div>
-                        <div class="col-xs-5">
+                        <div class="col-xs-6">
                           <h3>{{ingredient.item}}</h3>
                         </div>
-                      </div>
-                      <!--FORM-->
-                      <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
-                        <div class="col-xs-2 col-xs-offset-1">
-                          <input ng-model='ingredient.quantity' type="number" placeholder="Quantity">
-                        </div>
-                        <div class="col-xs-2">
-                          <select ng-model='ingredient.unit' placeholder="Unit">
-                            <option>tsp</option>
-                            <option>tbl</option>
-                            <option>cup</option>
-                            <option>lbs.</option>
-                          </select>
-                        </div>
-                        <div class="col-xs-6">
-                          <input ng-model='ingredient.item'type="text" placeholder="Ingredient">
-                        </div>
-                      </div>
-                      <!--ADD INGREDIENT-->
-                      <div class="row text-center">
-                        <button type="button" ng-click="addIngredient(formData)" class="btn btn-warning">
-                          <i style="font-size:3.5em; color:#ffd171" class='glyphicon glyphicon-plus'></i>
-                        </button>
-                      </div>
-
-                    </form>
-                </div>
-                <!--Directions tab-->
-                <div ng-controller='StepController' role="tabpanel" class="tab-pane fade" id="Directions">
-                  <!--STEPS-->
-                  <div ng-repeat="step in formData.steps">
-                    <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
-                        <div class="col-xs-11">
-                          <h3>{{step}}</h3>
-                        </div>
                         <div class="col-xs-1">
-                          <button type="button" ng-click="removeStep(formData.steps, $index)" class="btn btn-danger btn-circle">
+                          <button type="button" ng-click="removeIngredient(formData.ingredients, $index)" class="btn btn-danger">
                             <i style="font-size:2.5em; color:#ffd171" class='glyphicon glyphicon-remove'></i>
                           </button>
                         </div>
-                    </div>
-                  </div><!--ng-repeat end-->
+                      </div>
+                    </div><!--ng-repeat end-->
 
-                  <!--STEP FORM-->
-                  <form name='stepForm'>
-                    <!--  Live Preview -->
-                    <div style ='background-color:#f88632; border-color: #f88632; color:#ffd171' class="well row text-center">
-                      <h3>{{stepForm.step}}</h3>
-                    </div>
+                      <!--INGREDIENT FORM-->
+                      <form name='ingredientForm'>
+                        <!--  Live Preview -->
+                        <div style ='background-color:#f88632; border-color: #f88632; color:#ffd171' class="well row text-center">
+                          <div class="col-xs-2 col-xs-offset-1">
+                            <h3>{{ingredient.quantity}}</h3>
+                          </div>
+                          <div class="col-xs-2">
+                            <h3>{{ingredient.unit}}</h3>
+                          </div>
+                          <div class="col-xs-5">
+                            <h3>{{ingredient.item}}</h3>
+                          </div>
+                        </div>
+                        <!--FORM-->
+                        <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
+                          <div class="col-xs-2 col-xs-offset-1">
+                            <input ng-model='ingredient.quantity' type="number" placeholder="Quantity">
+                          </div>
+                          <div class="col-xs-2">
+                            <select ng-model='ingredient.unit' placeholder="Unit">
+                              <option>tsp</option>
+                              <option>tbl</option>
+                              <option>cup</option>
+                              <option>lbs.</option>
+                            </select>
+                          </div>
+                          <div class="col-xs-6">
+                            <input ng-model='ingredient.item'type="text" placeholder="Ingredient">
+                          </div>
+                        </div>
+                        <!--ADD INGREDIENT-->
+                        <div class="row text-center">
+                          <button type="button" ng-click="addIngredient(formData)" class="btn btn-warning">
+                            <i style="font-size:3.5em; color:#ffd171" class='glyphicon glyphicon-plus'></i>
+                          </button>
+                        </div>
 
-                    <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
-                      <input type="text" class="form-control input-md text-center" placeholder="Add a step" ng-model="stepForm.step">
-                    </div>
-                    <!--ADD STEP-->
-                    <div class="row text-center">
-                      <button ng-click='addStep(formData)' class="btn btn-warning btn-circle">
-                        <i style="font-size:3.5em; color:#ffd171" class='glyphicon glyphicon-plus'></i>
-                      </button>
-                    </div>
-                  </form>
+                      </form>
+                  </div>
+                  <!--Directions tab-->
+                  <div ng-controller='StepController' role="tabpanel" class="tab-pane fade" id="Directions">
+                    <!--STEPS-->
+                    <div ng-repeat="step in formData.steps">
+                      <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
+                          <div class="col-xs-11">
+                            <h3>{{step}}</h3>
+                          </div>
+                          <div class="col-xs-1">
+                            <button type="button" ng-click="removeStep(formData.steps, $index)" class="btn btn-danger btn-circle">
+                              <i style="font-size:2.5em; color:#ffd171" class='glyphicon glyphicon-remove'></i>
+                            </button>
+                          </div>
+                      </div>
+                    </div><!--ng-repeat end-->
+
+                    <!--STEP FORM-->
+                    <form name='stepForm'>
+                      <!--  Live Preview -->
+                      <div style ='background-color:#f88632; border-color: #f88632; color:#ffd171' class="well row text-center">
+                        <h3>{{stepForm.step}}</h3>
+                      </div>
+
+                      <div style ='background-color:#ffd171; border-color: #ffd171; color:#9b350d' class="well row text-center">
+                        <input type="text" class="form-control input-md text-center" placeholder="Add a step" ng-model="stepForm.step">
+                      </div>
+                      <!--ADD STEP-->
+                      <div class="row text-center">
+                        <button ng-click='addStep(formData)' class="btn btn-warning btn-circle">
+                          <i style="font-size:3.5em; color:#ffd171" class='glyphicon glyphicon-plus'></i>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
+
               </div>
 
-            </div>
 
-
-            <!-- SUBMIT BUTTON -->
-            <button type="submit" class="btn btn-warning" ng-click="createRecipe()" ng-disabled="userForm.$invalid">Add New Recipe</button>
-          </form>
+              <!-- SUBMIT BUTTON -->
+              <button type="submit" class="btn btn-warning" ng-click="createRecipe()" ng-disabled="userForm.$invalid">Add New Recipe</button>
+            </form>
+          </div>
         </div>
 
     </div>
