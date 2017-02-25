@@ -40,7 +40,7 @@ app.controller('recipeController', function($scope, $http){
             });
     };
     $scope.updateScore = function(id, score){
-    	$http.put('/api/recipes/' + id + '/score')
+    	$http.put('/api/recipes/' + id + '/' + score)
     		.success(function(data) {
     		console.log('id: ' + id + ',new score: ' + score);
     	});

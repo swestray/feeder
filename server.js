@@ -64,7 +64,7 @@ var Recipe = mongoose.model('Recipe', {
 
     //push a new review for a certain recipe
     app.post('/api/recipes/:recipe_id/reviews', function(req, res){
-    	Recipe.findByIdAndUpdate(req.params.recipe_id, {$push: {"reviews": req.body.review}}, function(err,recipe){
+    	Recipe.findByIdAndUpdate(ObjectId.fromString(req.params.recipe_id), {$push: {"reviews": req.body.review}}, function(err,recipe){
     		if(err)
     			res.send(err);
     		recipe.save(function(err){
@@ -76,10 +76,13 @@ var Recipe = mongoose.model('Recipe', {
     });
 
     //update a recipe with new score
-    app.put('/api/recipes/:recipe_id/score', function(req, res){
-    	Recipe.findById(req.params.recipe_id, function(err, recipe){
+    app.put('/api/recipes/:recipe_id/:score', function(req, res){
+    	Recipe.findByIdAndUpdate(req.params.recipe_id, {'score': req.params.score}, function(err, recipe){
     		if(err)
     			res.send(err);
+    		console.log(req.params.recipe_id);
+    		console.log(req.params.score);
+    		console.log(err);
     		console.log(recipe);
     	});
     });
