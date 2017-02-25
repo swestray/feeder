@@ -80,14 +80,7 @@ var Recipe = mongoose.model('Recipe', {
     	Recipe.findById(req.params.recipe_id, function(err, recipe){
     		if(err)
     			res.send(err);
-    		recipe.score = req;
-
-    		recipe.save(function(err){
-    			if(err)
-    				res.send(err);
-
-    			res.json({ message: 'recipe updated!'});
-    		});
+    		console.log(recipe);
     	});
     });
 
